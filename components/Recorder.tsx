@@ -10,7 +10,7 @@ export default function Recorder() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 85,
+    flex: 70,
     backgroundColor: "#222222",
   },
 })
