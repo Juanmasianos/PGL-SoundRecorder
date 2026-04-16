@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native'
 import React from 'react'
 import { COLORS } from '../styles/colors'
 import RecordButton from './RecordButton'
+import AudioList from './AudioList'
 
 export default function Recorder() {
   const handleRecordPress = () => {
@@ -12,6 +13,7 @@ export default function Recorder() {
   return (
     <View style={styles.container}>
       <RecordButton onPress={handleRecordPress} />
+      <AudioList />
     </View>
   )
 }

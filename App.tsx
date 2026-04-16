@@ -5,6 +5,9 @@ import NeonLight from './components/NeonLight';
 import Recorder from './components/Recorder';
 
 export default function App() {
+
+  
+
   return (
     <>
       <Header />
