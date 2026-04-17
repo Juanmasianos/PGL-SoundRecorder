@@ -26,9 +26,13 @@ export default function AudioList() {
     <View style={styles.container}>
       <View style={styles.listHeader}>
         <Text style={styles.title}>Grabaciones</Text>
-        <Pressable style={styles.deleteAllButton}>
-          <Text style={styles.buttonText}>🗑️</Text>
-        </Pressable>
+        {
+          audioList.length > 0
+            ? <Pressable style={styles.deleteAllButton}>
+                <Text style={styles.buttonText}>🗑️</Text>
+              </Pressable>
+            : <></>
+        }
       </View>
       <FlatList
         data={audioList}
