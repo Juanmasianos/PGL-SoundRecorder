@@ -4,6 +4,8 @@ PGL-SoundRecorder es una aplicación móvil desarrollada como practica de DAM. H
 
 ## Enunciados de la practica
 
+La docu la he hecho deprisa y corriendo adri, perdoneme, pero es corta(como mi pito xd) e IA
+
 - [Diseño en excalidraw](docs/01-design.md)
 - [Estructura de la app con respecto al diseño](docs/02-appStructure.md)
 - [Grabacion y peticion de permisos](docs/03-records.md)
