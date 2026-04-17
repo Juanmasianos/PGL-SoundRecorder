@@ -1,7 +1,8 @@
-import { StyleSheet, Text, Pressable, View } from 'react-native'
+import { StyleSheet, Text, Pressable, View, Animated } from 'react-native'
 import React from 'react'
 import { COLORS } from '../styles/colors'
 import { AudioItem, formatTime } from '../types/AudioItem'
+import { useRainbow } from './RgbContext';
 
 interface AudioCardProps {
   item: AudioItem;
@@ -15,32 +16,50 @@ export default function AudioCard({ item, onDelete, onPlay, onStop, playingUri }
 
   const dateFormatted = new Date(item.date).toLocaleDateString();
   const isCurrentlyPlaying = playingUri === item.uri;
+  const { dynamicColor } = useRainbow();
 
   return (
     <View style={styles.cardContainer}>
-      <Pressable style={styles.deleteButton} onPress={() => onDelete(item.id)}>
-        <Text style={styles.buttonText}>🗑️</Text>
-      </Pressable>
-      <View style={styles.audioItem}>
+      <Animated.View style={[styles.deleteButton, { borderColor: dynamicColor }]}>
+        <Pressable onPress={() => onDelete(item.id)}>
+          <Text style={styles.buttonText}>🗑️</Text>
+        </Pressable>
+      </Animated.View>
+      <Animated.View 
+        style={[
+          styles.audioItem, 
+          { 
+            borderColor: dynamicColor,
+            backgroundColor: isCurrentlyPlaying ? 'rgba(255, 255, 255, 0.9)' : COLORS.white,
+            borderWidth: isCurrentlyPlaying ? 4 : 2 
+          }
+        ]}
+      >
         <View style={styles.audioActions}>
-          {!isCurrentlyPlaying ? (
-          <Pressable style={styles.actionButton} onPress={() => onPlay(item.uri)}>
-            <Text style={styles.buttonText}>▶</Text>
-          </Pressable>
-        ) : (
-          <Pressable style={styles.actionButton} onPress={onStop}>
-            <Text style={styles.buttonText}>⏹</Text>
-          </Pressable>
-        )}
+          <Animated.View style={[styles.actionButton, { borderColor: dynamicColor }]}>
+            <Pressable onPress={!isCurrentlyPlaying ? () => onPlay(item.uri) : onStop}>
+              <Animated.Text style={[styles.buttonText, {color: dynamicColor}]}>
+                {!isCurrentlyPlaying ? '▶' : '⏹'}
+              </Animated.Text>
+            </Pressable>
+          </Animated.View>
         </View>
+
         <View style={styles.audioInfo}>
-          <Text style={styles.audioName}>{item.name}</Text>
+          <Animated.Text style={[styles.audioName, { color: dynamicColor }]}>
+            {item.name}
+          </Animated.Text>
+          
           <View style={styles.audioRow}>
-            <Text style={styles.audioDetails}>{formatTime(item.duration)} </Text>
-            <Text style={styles.audioDetails}>{dateFormatted} </Text>
+            <Animated.Text style={[styles.audioDetails, { color: dynamicColor }]}>
+              {formatTime(item.duration)}
+            </Animated.Text>
+            <Animated.Text style={[styles.audioDetails, { color: dynamicColor }]}>
+              {dateFormatted}
+            </Animated.Text>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </View>
   )
 }
@@ -57,9 +76,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 8,
     marginTop: 10,
-    borderWidth: 2,
+    borderWidth: 4,
     borderRadius: 20,
-    borderColor: COLORS.light,
   },
   audioItem: {
     flex: 1,
@@ -68,16 +86,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 8,
     marginLeft: 10,
-    borderWidth: 2,
+    borderWidth: 4,
     borderRadius: 8,
-    borderColor: COLORS.light,
   },
   audioInfo: {
     flex: 1,
     marginLeft: 40
   },
   audioName: {
-    color: COLORS.light,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -86,7 +102,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   audioDetails: {
-    color: COLORS.light,
     fontSize: 14,
     marginTop: 4,
   },
@@ -99,12 +114,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 4,
     borderRadius: 20,
-    borderColor: COLORS.light,
   },
   buttonText: {
-    color: COLORS.headerBG,
-    fontSize: 16,
+    fontSize: 20,
   },
 })

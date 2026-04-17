@@ -3,16 +3,19 @@ import React, { useEffect, useState } from 'react'
 import { COLORS } from '../styles/colors'
 import RecordButton from './RecordButton'
 import AudioList from './AudioList'
-import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio'
+import { RecordingPresets, useAudioRecorder, useAudioRecorderState } from 'expo-audio'
 import { AudioModal } from './AudioModal'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AudioItem } from '../types/AudioItem'
 import { useAudioPlayer } from '../service/audioPlayer'
 import { requestPermission } from '../service/RecorderService'
 import { StorageService } from '../service/StorageService'
 
+interface RecorderProps {
+  onRecordingChange: (isRecording: boolean) => void;
+  onPlaybackChange: (isPlaying: boolean) => void;
+}
 
-export default function Recorder() {
+export default function Recorder({ onRecordingChange, onPlaybackChange }: RecorderProps) {
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
@@ -84,9 +87,18 @@ export default function Recorder() {
   };
 
   useEffect(() => {
+    onRecordingChange(recorderState.isRecording);
+  }, [recorderState.isRecording]);
+
+  useEffect(() => {
+    onPlaybackChange(!!playingUri); 
+  }, [playingUri]);
+
+  useEffect(() => {
     (async () => {
       loadAudios();
       requestPermission();
+      onRecordingChange(recorderState.isRecording);
     })();
   }, []);
 

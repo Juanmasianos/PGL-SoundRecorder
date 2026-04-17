@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, Pressable } from 'react-native'
+import { StyleSheet, Text, Pressable, Animated } from 'react-native'
 import { COLORS } from '../styles/colors'
 import { View } from 'react-native'
 import { RecorderState } from 'expo-audio'
+import { useRainbow } from './RgbContext'
 
 interface RecordButtonProps {
   onPress: () => void
@@ -10,11 +11,21 @@ interface RecordButtonProps {
 }
 
 export default function RecordButton({ onPress, recordState }: RecordButtonProps, ) {
+
+  const { dynamicColor } = useRainbow();
+
   return (
     <View style={styles.container}>
-      <Pressable style={styles.recordButton} onPress={onPress}>
-        <Text style={styles.buttonText}>{recordState?.isRecording ? '■' : '▶'}</Text>
-      </Pressable>
+      <Animated.View style={[styles.recordButton, { borderColor: dynamicColor }]}>
+        <Pressable 
+          style={styles.pressableArea} 
+          onPress={onPress}
+        >
+          <Animated.Text style={[styles.buttonText, {color: dynamicColor}]}>
+            {recordState?.isRecording ? '■' : '▶'}
+          </Animated.Text>
+        </Pressable>
+      </Animated.View>
     </View>
   )
 }
@@ -28,14 +39,15 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 3,
-    borderColor: COLORS.light,
+    borderWidth: 4,
     backgroundColor: 'transparent',
+  },
+  pressableArea: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    color: COLORS.white,
     fontSize: 60,
     marginBottom: 8,
     marginLeft: 6

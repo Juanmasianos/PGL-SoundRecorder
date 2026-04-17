@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator, Animated } from 'react-native'
 import { COLORS } from '../styles/colors'
 import { AudioItem } from '../types/AudioItem'
 import AudioCard from './AudioCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StorageService } from '../service/StorageService'
+import { useRainbow } from './RgbContext'
 
 interface AudioListProps {
   audioList: AudioItem[];
@@ -18,6 +19,8 @@ interface AudioListProps {
 export default function AudioList({ audioList, setAudioList, onDelete, onPlay, onStop, playingUri }: AudioListProps) {
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const { dynamicColor } = useRainbow();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,21 +44,23 @@ export default function AudioList({ audioList, setAudioList, onDelete, onPlay, o
       <View style={styles.listHeader}>
         <Text style={styles.title}>Grabaciones</Text>
         {
-          audioList.length > 0
-            ? <Pressable style={styles.deleteAllButton} onPress={deleteAll}>
-              <Text style={styles.buttonText}>🗑️</Text>
+          audioList.length > 0 && (
+            <Pressable onPress={deleteAll}>
+              <Animated.View style={[styles.deleteAllButton, { borderColor: dynamicColor }]}>
+                <Text style={styles.buttonText}>🗑️</Text>
+              </Animated.View>
             </Pressable>
-            : <></>
+          )
         }
       </View>
       {isLoading ? (
-        // Pantalla de carga
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={COLORS.white} />
-          <Text style={styles.loadingText}>Cargando audios...</Text>
+          <Animated.Text style={[styles.loadingText, { color: dynamicColor }]}>
+            Cargando audios...
+          </Animated.Text>
         </View>
       ) : (
-        // Lista real
         <FlatList
           data={audioList}
           keyExtractor={(item) => item.id}
@@ -68,7 +73,11 @@ export default function AudioList({ audioList, setAudioList, onDelete, onPlay, o
               playingUri={playingUri}
             />
           )}
-          ListEmptyComponent={<Text style={styles.emptyText}>No hay grabaciones</Text>}
+          ListEmptyComponent={
+            <Animated.Text style={[styles.emptyText, { color: dynamicColor }]}>
+              No hay grabaciones
+            </Animated.Text>
+          }
         />
       )}
     </View>
@@ -101,13 +110,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderRadius: 30,
-    borderColor: COLORS.light,
   },
   buttonText: {
     fontSize: 25,
   },
   emptyText: {
-    color: COLORS.light,
     textAlign: 'center',
     marginTop: 32,
   },

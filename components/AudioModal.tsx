@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Modal, View, Text, TextInput, Pressable, StyleSheet, Animated } from 'react-native';
 import { COLORS } from "../styles/colors"
+import { useRainbow } from './RgbContext';
 
 interface AudioModalProps {
   visible: boolean;
@@ -17,6 +18,9 @@ export const AudioModal = ({
   onCancel,
   onSave
 }: AudioModalProps) => {
+
+  const { dynamicColor } = useRainbow();
+
   return (
     <Modal animationType="fade" transparent visible={visible} onRequestClose={onCancel}>
       <View style={styles.modalOverlay}>
@@ -34,9 +38,11 @@ export const AudioModal = ({
             <Pressable style={[styles.modalButton, styles.btnCancel]} onPress={onCancel}>
               <Text style={styles.btnText}>Descartar</Text>
             </Pressable>
-            <Pressable style={[styles.modalButton, styles.btnSave]} onPress={onSave}>
-              <Text style={styles.btnText}>Guardar</Text>
-            </Pressable>
+            <Animated.View style={[styles.animatedBtnContainer, { backgroundColor: dynamicColor }]}>
+              <Pressable style={styles.fullClickArea} onPress={onSave}>
+                <Text style={styles.btnText}>Guardar</Text>
+              </Pressable>
+            </Animated.View>
           </View>
         </View>
       </View>
@@ -71,10 +77,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 25,
+  },animatedBtnContainer: {
+    flex: 1,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    overflow: 'hidden'
   },
-  modalButtons: { flexDirection: 'row', width: '100%' },
-  modalButton: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', marginHorizontal: 5 },
-  btnCancel: { backgroundColor: '#3a3a3c' },
-  btnSave: { backgroundColor: COLORS.light },
-  btnText: { color: COLORS.white, fontWeight: '600' },
+  modalButtons: { 
+    flexDirection: 'row', 
+    width: '100%' 
+  },
+  modalButton: { 
+    flex: 1, 
+    paddingVertical: 12, 
+    borderRadius: 10, 
+    alignItems: 'center', 
+    marginHorizontal: 5 
+  },
+  fullClickArea: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%'
+  },
+  btnCancel: { 
+    backgroundColor: '#3a3a3c' 
+  },
+  btnText: { 
+    color: COLORS.white, 
+    fontWeight: '600' 
+  },
 });
