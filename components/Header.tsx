@@ -12,7 +12,7 @@ export default function Header() {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 15,
+		flex: 1.5,
 		flexDirection: 'row',
 		backgroundColor: 'black',
 	},

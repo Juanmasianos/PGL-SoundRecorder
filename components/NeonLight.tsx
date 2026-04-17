@@ -4,13 +4,15 @@ import { StyleSheet, View } from 'react-native'
 export default function NeonLight() {
   return (
     <View style={styles.wrapper}>
-      <View style={styles.glowLayer1} />
-      <View style={styles.glowLayer2} />
-      <View style={styles.glowLayer3} />
-      <View style={styles.glowLayer4} />
-      <View style={styles.glowLayer5} />
-      <View style={styles.glowLayer6} />
-      <View style={styles.neonCore} />
+      <View style={styles.neon}>
+        <View style={styles.glowLayer1} />
+        <View style={styles.glowLayer2} />
+        <View style={styles.glowLayer3} />
+        <View style={styles.glowLayer4} />
+        <View style={styles.glowLayer5} />
+        <View style={styles.glowLayer6} />
+        <View style={styles.neonCore} />
+      </View>
     </View>
   )
 }
@@ -18,9 +20,12 @@ export default function NeonLight() {
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: '#222222',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 15
+    flex: 1,
+  },
+  neon: {
+    marginTop: 15,
+    alignItems: "center",
+    justifyContent: "center"
   },
   glowLayer1: {
     position: 'absolute',

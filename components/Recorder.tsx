@@ -20,9 +20,7 @@ export default function Recorder() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 70,
+    flex: 6.5,
     backgroundColor: COLORS.bodyBg,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 })

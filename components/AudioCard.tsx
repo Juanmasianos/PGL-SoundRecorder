@@ -1,48 +1,75 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, Pressable, View } from 'react-native'
 import React from 'react'
 import { COLORS } from '../styles/colors'
-import { AudioItem } from '../types/AudioItem'
+import { AudioItem, formatTime } from '../types/AudioItem'
 
 export default function AudioCard({ item }: { item: AudioItem }) {
-  return ( 
-    <View style={styles.audioItem}>
-      <View style={styles.audioInfo}>
-        <Text style={styles.audioName}>{item.name}</Text>
-        <Text style={styles.audioDetails}>{item.duration} - {item.date.toLocaleDateString()}</Text>
-      </View>
-      <View style={styles.audioActions}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.buttonText}>▶</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.buttonText}>🗑️</Text>
-        </TouchableOpacity>
+  return (
+    <View style={styles.cardContainer}>
+      <Pressable style={styles.deleteButton}>
+        <Text style={styles.buttonText}>🗑️</Text>
+      </Pressable>
+      <View style={styles.audioItem}>
+        <View style={styles.audioActions}>
+          <Pressable style={styles.actionButton}>
+            <Text style={styles.buttonText}>▶</Text>
+          </Pressable>
+        </View>
+        <View style={styles.audioInfo}>
+          <Text style={styles.audioName}>{item.name}</Text>
+          <View style={styles.audioRow}>
+            <Text style={styles.audioDetails}>{formatTime(item.duration)} </Text>
+            <Text style={styles.audioDetails}>{item.date.toLocaleDateString()} </Text>
+          </View>
+        </View>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  audioItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  cardContainer: {
+    flexDirection: "row",
+  },
+  deleteButton: {
+    width: 40,
+    height: 40,
     backgroundColor: COLORS.white,
-    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+    marginTop: 10,
+    borderWidth: 2,
+    borderRadius: 20,
+    borderColor: COLORS.light,
+  },
+  audioItem: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: COLORS.white,
+    padding: 10,
     marginBottom: 8,
+    marginLeft: 10,
+    borderWidth: 2,
     borderRadius: 8,
+    borderColor: COLORS.light,
   },
   audioInfo: {
     flex: 1,
+    marginLeft: 40
   },
   audioName: {
-    color: COLORS.headerBG,
+    color: COLORS.light,
     fontSize: 16,
     fontWeight: '600',
   },
+  audioRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   audioDetails: {
     color: COLORS.light,
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 4,
   },
   audioActions: {
@@ -51,11 +78,12 @@ const styles = StyleSheet.create({
   actionButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
     backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 8,
+    borderWidth: 2,
+    borderRadius: 20,
+    borderColor: COLORS.light,
   },
   buttonText: {
     color: COLORS.headerBG,

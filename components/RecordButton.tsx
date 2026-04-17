@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, Pressable } from 'react-native'
 import { COLORS } from '../styles/colors'
 import { View } from 'react-native'
 
@@ -10,17 +10,17 @@ interface RecordButtonProps {
 export default function RecordButton({ onPress }: RecordButtonProps) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.recordButton} onPress={onPress}>
+      <Pressable style={styles.recordButton} onPress={onPress}>
         <Text style={styles.buttonText}>▶</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 30,
-
+    flex: 3,
+    alignSelf: "center"
   },
   recordButton: {
     width: 100,
