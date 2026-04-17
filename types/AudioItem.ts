@@ -3,8 +3,8 @@ export type AudioItem = {
   id: string
   name: string
   duration: number
-  date: Date
-
+  date: Date | string
+  uri: string
 }
 export const formatTime = (totalSeconds: number) => {
   const minutes = Math.floor(totalSeconds / 60);

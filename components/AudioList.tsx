@@ -3,24 +3,27 @@ import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native'
 import { COLORS } from '../styles/colors'
 import { AudioItem } from '../types/AudioItem'
 import AudioCard from './AudioCard'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
+interface AudioListProps {
+  audioList: AudioItem[];
+  setAudioList: React.Dispatch<React.SetStateAction<AudioItem[]>>;
+  onDelete: (uri: string) => void;
+  onPlay: (uri: string) => void;
+  onStop: () => void;
+  playingUri: string | null;
+}
 
-export default function AudioList() {
-  // Datos mock - reemplazar con datos reales cuando se implemente
-  const [audioList, setAudioList] = useState<AudioItem[]>([
-    { id: '1', name: 'Grabación 1', duration: 30, date: new Date('2026-04-15') },
-    { id: '2', name: 'Grabación 2', duration: 75, date: new Date('2026-04-14') },
-    { id: '3', name: 'Grabación 1', duration: 30, date: new Date('2026-04-15') },
-    { id: '4', name: 'Grabación 2', duration: 75, date: new Date('2026-04-14') },
-    { id: '5', name: 'Grabación 1', duration: 30, date: new Date('2026-04-15') },
-    { id: '6', name: 'Grabación 2', duration: 75, date: new Date('2026-04-14') },
-    { id: '7', name: 'Grabación 1', duration: 30, date: new Date('2026-04-15') },
-    { id: '8', name: 'Grabación 2', duration: 75, date: new Date('2026-04-14') },
-    { id: '9', name: 'Grabación 1', duration: 30, date: new Date('2026-04-15') },
-    { id: '10', name: 'Grabación 2', duration: 75, date: new Date('2026-04-14') },
-  ])
+export default function AudioList({ audioList, setAudioList, onDelete, onPlay, onStop, playingUri}: AudioListProps) {
 
-
+  const deleteAll = async () => {
+    try {
+      await AsyncStorage.removeItem('List_of_audios');
+      setAudioList([]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -28,16 +31,16 @@ export default function AudioList() {
         <Text style={styles.title}>Grabaciones</Text>
         {
           audioList.length > 0
-            ? <Pressable style={styles.deleteAllButton}>
-                <Text style={styles.buttonText}>🗑️</Text>
-              </Pressable>
+            ? <Pressable style={styles.deleteAllButton} onPress={deleteAll}>
+              <Text style={styles.buttonText}>🗑️</Text>
+            </Pressable>
             : <></>
         }
       </View>
       <FlatList
         data={audioList}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <AudioCard item={item} />}
+        renderItem={({ item }) => <AudioCard item={item} onDelete={onDelete} onPlay={onPlay} onStop={onStop} playingUri={playingUri} />}
         ListEmptyComponent={<Text style={styles.emptyText}>No hay grabaciones</Text>}
       />
     </View>

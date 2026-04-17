@@ -3,23 +3,41 @@ import React from 'react'
 import { COLORS } from '../styles/colors'
 import { AudioItem, formatTime } from '../types/AudioItem'
 
-export default function AudioCard({ item }: { item: AudioItem }) {
+interface AudioCardProps {
+  item: AudioItem;
+  onDelete: (uri: string) => void;
+  onPlay: (uri: string) => void
+  onStop: () => void;
+  playingUri: string | null;
+}
+
+export default function AudioCard({ item, onDelete, onPlay, onStop, playingUri }: AudioCardProps) {
+
+  const dateFormatted = new Date(item.date).toLocaleDateString();
+  const isCurrentlyPlaying = playingUri === item.uri;
+
   return (
     <View style={styles.cardContainer}>
-      <Pressable style={styles.deleteButton}>
+      <Pressable style={styles.deleteButton} onPress={() => onDelete(item.id)}>
         <Text style={styles.buttonText}>🗑️</Text>
       </Pressable>
       <View style={styles.audioItem}>
         <View style={styles.audioActions}>
-          <Pressable style={styles.actionButton}>
+          {!isCurrentlyPlaying ? (
+          <Pressable style={styles.actionButton} onPress={() => onPlay(item.uri)}>
             <Text style={styles.buttonText}>▶</Text>
           </Pressable>
+        ) : (
+          <Pressable style={styles.actionButton} onPress={onStop}>
+            <Text style={styles.buttonText}>⏹</Text>
+          </Pressable>
+        )}
         </View>
         <View style={styles.audioInfo}>
           <Text style={styles.audioName}>{item.name}</Text>
           <View style={styles.audioRow}>
             <Text style={styles.audioDetails}>{formatTime(item.duration)} </Text>
-            <Text style={styles.audioDetails}>{item.date.toLocaleDateString()} </Text>
+            <Text style={styles.audioDetails}>{dateFormatted} </Text>
           </View>
         </View>
       </View>

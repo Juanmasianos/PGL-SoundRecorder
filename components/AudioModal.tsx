@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { COLORS } from "../styles/colors"
 
-interface SaveAudioModalProps {
+interface AudioModalProps {
   visible: boolean;
   audioName: string;
   setAudioName: (name: string) => void;
@@ -10,13 +10,13 @@ interface SaveAudioModalProps {
   onSave: () => void;
 }
 
-export const SaveAudioModal = ({ 
-  visible, 
-  audioName, 
-  setAudioName, 
-  onCancel, 
-  onSave 
-}: SaveAudioModalProps) => {
+export const AudioModal = ({
+  visible,
+  audioName,
+  setAudioName,
+  onCancel,
+  onSave
+}: AudioModalProps) => {
   return (
     <Modal animationType="fade" transparent visible={visible} onRequestClose={onCancel}>
       <View style={styles.modalOverlay}>
@@ -58,7 +58,12 @@ const styles = StyleSheet.create({
     padding: 25,
     alignItems: 'center',
   },
-  modalTitle: { color: COLORS.white, fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
+  modalTitle: {
+    color: COLORS.white,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20
+  },
   input: {
     width: '100%',
     backgroundColor: '#2c2c2e',
@@ -70,6 +75,6 @@ const styles = StyleSheet.create({
   modalButtons: { flexDirection: 'row', width: '100%' },
   modalButton: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', marginHorizontal: 5 },
   btnCancel: { backgroundColor: '#3a3a3c' },
-  btnSave: { backgroundColor: '#007AFF' },
+  btnSave: { backgroundColor: COLORS.light },
   btnText: { color: COLORS.white, fontWeight: '600' },
 });
