@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Alert, StyleSheet, View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { COLORS } from '../styles/colors'
 import RecordButton from './RecordButton'
@@ -8,6 +8,9 @@ import { AudioModal } from './AudioModal'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AudioItem } from '../types/AudioItem'
 import { useAudioPlayer } from '../service/audioPlayer'
+import { requestPermission } from '../service/RecorderService'
+import { StorageService } from '../service/StorageService'
+
 
 export default function Recorder() {
 
@@ -19,12 +22,13 @@ export default function Recorder() {
   const [tempAudioData, setTempAudioData] = useState<{ uri: string, duration: number } | null>(null);
   const [audioName, setAudioName] = useState('');
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const { playAudio, stopAudio, playingUri } = useAudioPlayer();
 
   const deleteAudio = async (id: string) => {
-    const updatedList = audioList.filter(item => item.id !== id);
+    const updatedList = await StorageService.deleteAudio(id);
     setAudioList(updatedList);
-    await AsyncStorage.setItem('List_of_audios', JSON.stringify(updatedList));
   };
 
   const record = async () => {
@@ -47,8 +51,8 @@ export default function Recorder() {
   };
 
   const loadAudios = async () => {
-    const stored = await AsyncStorage.getItem('List_of_audios');
-    if (stored) setAudioList(JSON.parse(stored));
+    const audios = await StorageService.getAllAudios();
+    setAudioList(audios);
   };
 
   const saveFinalAudio = async () => {
@@ -63,44 +67,26 @@ export default function Recorder() {
     };
 
     try {
-      const STORAGE_KEY = 'List_of_audios';
+      const updatedList = await StorageService.saveAudio(newAudio);
 
-      const storedData = await AsyncStorage.getItem(STORAGE_KEY);
-
-      const existingList = storedData ? JSON.parse(storedData) : [];
-      const updatedList = [newAudio, ...existingList];
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
+      setIsSaving(true);
+      setModalVisible(false);
       setAudioList(updatedList);
 
-      // Limpiar y cerrar
-      setModalVisible(false);
-      setTempAudioData(null);
-      setAudioName('');
-
+      setTimeout(() => {
+        setIsSaving(false);
+        setTempAudioData(null);
+        setAudioName('');
+      }, 3000);
     } catch (e) {
-      console.error("Error al guardar la lista completa:", e);
-      Alert.alert('Error', 'No se pudo actualizar la lista de audios');
+      Alert.alert('Error', 'No se pudo guardar');
     }
   };
 
   useEffect(() => {
     (async () => {
       loadAudios();
-      const status = await AudioModule.requestRecordingPermissionsAsync();
-      if (!status.granted) {
-        setAudioModeAsync({
-          playsInSilentMode: false,
-          allowsRecording: false,
-        })
-        Alert.alert('Permission to access microphone was denied');
-      } else {
-        setAudioModeAsync({
-          playsInSilentMode: true,
-          allowsRecording: true,
-        })
-      }
-
-      ;
+      requestPermission();
     })();
   }, []);
 
@@ -115,6 +101,12 @@ export default function Recorder() {
 
   return (
     <View style={styles.container}>
+      {isSaving && (
+        <View style={styles.fullScreenOverlay}>
+          <ActivityIndicator size="large" color={COLORS.white} />
+          <Text style={styles.loadingText}>Guardando grabación...</Text>
+        </View>
+      )}
       <RecordButton onPress={handleRecordPress} recordState={recorderState} />
       <AudioList
         audioList={audioList}
@@ -140,4 +132,12 @@ const styles = StyleSheet.create({
     flex: 6.5,
     backgroundColor: COLORS.bodyBg,
   },
+  fullScreenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999, // Por encima de todo
+  },
+  loadingText: { color: COLORS.white, marginTop: 10 }
 })

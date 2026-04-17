@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator } from 'react-native'
 import { COLORS } from '../styles/colors'
 import { AudioItem } from '../types/AudioItem'
 import AudioCard from './AudioCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StorageService } from '../service/StorageService'
 
 interface AudioListProps {
   audioList: AudioItem[];
@@ -14,11 +15,21 @@ interface AudioListProps {
   playingUri: string | null;
 }
 
-export default function AudioList({ audioList, setAudioList, onDelete, onPlay, onStop, playingUri}: AudioListProps) {
+export default function AudioList({ audioList, setAudioList, onDelete, onPlay, onStop, playingUri }: AudioListProps) {
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const deleteAll = async () => {
     try {
-      await AsyncStorage.removeItem('List_of_audios');
+      await StorageService.clearAll();
       setAudioList([]);
     } catch (e) {
       console.error(e);
@@ -37,12 +48,29 @@ export default function AudioList({ audioList, setAudioList, onDelete, onPlay, o
             : <></>
         }
       </View>
-      <FlatList
-        data={audioList}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <AudioCard item={item} onDelete={onDelete} onPlay={onPlay} onStop={onStop} playingUri={playingUri} />}
-        ListEmptyComponent={<Text style={styles.emptyText}>No hay grabaciones</Text>}
-      />
+      {isLoading ? (
+        // Pantalla de carga
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={COLORS.white} />
+          <Text style={styles.loadingText}>Cargando audios...</Text>
+        </View>
+      ) : (
+        // Lista real
+        <FlatList
+          data={audioList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <AudioCard
+              item={item}
+              onDelete={onDelete}
+              onPlay={onPlay}
+              onStop={onStop}
+              playingUri={playingUri}
+            />
+          )}
+          ListEmptyComponent={<Text style={styles.emptyText}>No hay grabaciones</Text>}
+        />
+      )}
     </View>
   )
 }
@@ -83,4 +111,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 32,
   },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: COLORS.white,
+    marginTop: 10,
+    fontSize: 16,
+  }
 })

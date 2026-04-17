@@ -1,5 +1,8 @@
-import { AudioPlayer, createAudioPlayer } from 'expo-audio';
+import { AudioModule, AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { useState } from 'react';
+import { Alert } from 'react-native';
+
+
 
 export function useAudioPlayer() {
   const [activePlayer, setActivePlayer] = useState<AudioPlayer | null>(null);
@@ -13,7 +16,7 @@ export function useAudioPlayer() {
 
     try {
       const player = createAudioPlayer(uri);
-      
+
       player.addListener('playbackStatusUpdate', (status: { didJustFinish: boolean }) => {
         if (status.didJustFinish) {
           setActivePlayer(null);
@@ -31,7 +34,7 @@ export function useAudioPlayer() {
 
   const stopAudio = () => {
     if (activePlayer) {
-      activePlayer.pause(); 
+      activePlayer.pause();
       activePlayer.release();
       setActivePlayer(null);
       setPlayingUri(null);
